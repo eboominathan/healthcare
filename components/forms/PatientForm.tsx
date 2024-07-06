@@ -3,13 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import CustomFormField from "./CustomFormField";
 import SubmitButton from "./SubmitButton";
 import { useState } from "react";
 import UserFormValidation from "@/lib/validation";
 import { useRouter } from "next/navigation";
+import { CreateUser } from "@/lib/actions/patient.actions";
+import { parseStringify } from "@/app/lib/utils";
  
 
 export enum FormFieldType {
@@ -29,21 +30,30 @@ const PatientForm = () => {
 
     const router = useRouter();
     const [isLoading, setisLoading] = useState(false)
-  // 1. Define your form.
+ 
   const form = useForm<z.infer<typeof UserFormValidation>>({
     resolver: zodResolver(UserFormValidation),
     defaultValues: {
-      username: "",
+      name: "",
+      email: "",
+      phone: "",
     },
   });
 
-  // {name,email,phone_number} 
+ 
   async function onSubmit(values: z.infer<typeof UserFormValidation>) {
     setisLoading(true)
     try{
-        // const userData =  {name,email,phone_number}; 
-        // const user = await createUser(userData)
-        // if(user) router.push(`/patients/${user.$id}/register`)
+      const userData = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+      };   
+        const newUser = await CreateUser(userData)
+        return parseStringify(newUser)
+        // if (newUser) {
+        //   router.push(`/patients/${newUser.$id}/register`);
+        // }
 
 
     }catch(error){
@@ -81,7 +91,7 @@ const PatientForm = () => {
           label="Phone number"
           placeholder="(555) 123-456"      
         />
-        <SubmitButton isLoading={isLoading} >Get Started </SubmitButton>
+        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
     </Form>
   );
