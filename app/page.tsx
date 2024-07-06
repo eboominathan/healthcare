@@ -21,7 +21,7 @@ export default function Home() {
 
           <div className="text-14-regular mt-20 flex justify-between">
             <p className="justify-items-end text-dark-600 xl:text-left">
-            &copy; 2024 CarePulse
+            &copy; 2024 Careplus <Link href={'https://linkedin.com/in/eboominathan'} >@ Boominathan Elango</Link>
             </p>
             <Link href="/?admin=true"  className="text-green-500">
             Admin
