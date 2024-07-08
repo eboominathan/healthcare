@@ -41,20 +41,12 @@ const PatientForm = () => {
   });
 
  
-  async function onSubmit(values: z.infer<typeof UserFormValidation>) {
+  async function onSubmit({name,email,phone}: z.infer<typeof UserFormValidation>) {
     setisLoading(true)
     try{
-      const userData = {
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-      };   
-        const newUser = await CreateUser(userData)
-        return parseStringify(newUser)
-        // if (newUser) {
-        //   router.push(`/patients/${newUser.$id}/register`);
-        // }
-
+      const userData = {name, email, phone};   
+        const user = await CreateUser(userData)     
+        if (user) router.push(`/patients/${user.$id}/register`);
 
     }catch(error){
       console.log(error)      
@@ -87,11 +79,11 @@ const PatientForm = () => {
          <CustomFormField 
         control={form.control}
           fieldType={FormFieldType.PHONE_INPUT} 
-          name="phone_number"
+          name="phone"
           label="Phone number"
           placeholder="(555) 123-456"      
         />
-        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+        <SubmitButton isLoading={isLoading} className="" >Get Started</SubmitButton>
       </form>
     </Form>
   );
