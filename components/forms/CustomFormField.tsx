@@ -17,6 +17,7 @@ import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Select, SelectContent, SelectTrigger, SelectValue } from "../ui/select";
 import { Checkbox } from "../ui/checkbox";
+import { Textarea } from "../ui/textarea";
 
 interface CustomProps {
   control: Control<any>;
@@ -34,7 +35,7 @@ interface CustomProps {
 }
 
 const Renderfield = ({ field, props }: { field: any; props: CustomProps }) => {
-  const { fieldType, iconSrc, iconAlt, placeholder } = props;
+  const { fieldType, iconSrc, iconAlt, placeholder,showTimeSelect,dateFormat,renderSkeleton } = props;
  
   switch (fieldType) {
     case FormFieldType.INPUT:
