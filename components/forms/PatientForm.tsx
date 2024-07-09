@@ -19,8 +19,8 @@ export enum FormFieldType {
     SELECT ='select',
     RADIO = 'radio',
     CHECKBOX = 'checkbox',
-    DATEPICKER = 'datepicker',
-    SKELETEON = 'skeleteon',
+    DATE_PICKER = 'datepicker',
+    SKELETON = 'skeleteon',
     PHONE_INPUT = 'phone_input',
 }
 
@@ -83,10 +83,12 @@ const PatientForm = () => {
           label="Phone number"
           placeholder="(555) 123-456"      
         />
-        <SubmitButton isLoading={isLoading} className="" >Get Started</SubmitButton>
+        <SubmitButton isLoading={isLoading} >Get Started</SubmitButton>
       </form>
     </Form>
   );
 };
 
 export default PatientForm;
+
+
