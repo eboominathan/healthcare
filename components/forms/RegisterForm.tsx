@@ -4,43 +4,86 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl } from "@/components/ui/form";
-import CustomFormField from "./CustomFormField";
-import SubmitButton from "./SubmitButton";
+import CustomFormField, { FormFieldType } from "../CustomFormField";
+
 import { useState } from "react";
-import UserFormValidation from "@/lib/validation";
+import { PatientFormValidation } from "@/lib/validation";
 import { useRouter } from "next/navigation";
-import { CreateUser } from "@/lib/actions/patient.actions";
-import { FormFieldType } from "./PatientForm";
-import { Doctors, GenderOptions, IdentificationTypes } from "@/constants";
+import { registerPatient } from "@/lib/actions/patient.actions";
+ 
+import { Doctors, GenderOptions, IdentificationTypes, PatientFormDefaultValues } from "@/constants";
 
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { SelectItem } from "../ui/select";
 import Image from "next/image";
 import { Label } from "../ui/label";
+import SubmitButton from "../SubmitButton";
+import FileUploader from "../Fileuploader";
 
 const RegisterForm = ({ user }: { user: User }) => {
   const router = useRouter();
   const [isLoading, setisLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof UserFormValidation>>({
-    resolver: zodResolver(UserFormValidation),
+  const form = useForm<z.infer<typeof PatientFormValidation>>({
+    resolver: zodResolver(PatientFormValidation),
     defaultValues: {
+      ...PatientFormDefaultValues,
       name: "",
       email: "",
       phone: "",
     },
   });
 
-  async function onSubmit({
-    name,
-    email,
-    phone,
-  }: z.infer<typeof UserFormValidation>) {
+  const onSubmit = async (values: z.infer<typeof PatientFormValidation>) => {
     setisLoading(true);
+    // Store file info in form data as
+    let formData;
+    if (
+      values.identificationDocument &&
+      values.identificationDocument?.length > 0
+    ) {
+      const blobFile = new Blob([values.identificationDocument[0]], {
+        type: values.identificationDocument[0].type,
+      });
+
+      formData = new FormData();
+      formData.append("blobFile", blobFile);
+      formData.append("fileName", values.identificationDocument[0].name);
+    }
+
     try {
-      const userData = { name, email, phone };
-      const user = await CreateUser(userData);
-      if (user) router.push(`/patients/${user.$id}/register`);
+      const patient = {
+        userId: user.$id,
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        birthDate: new Date(values.birthDate),
+        gender: values.gender,
+        address: values.address,
+        occupation: values.occupation,
+        emergencyContactName: values.emergencyContactName,
+        emergencyContactNumber: values.emergencyContactNumber,
+        primaryPhysician: values.primaryPhysician,
+        insuranceProvider: values.insuranceProvider,
+        insurancePolicyNumber: values.insurancePolicyNumber,
+        allergies: values.allergies,
+        currentMedication: values.currentMedication,
+        familyMedicalHistory: values.familyMedicalHistory,
+        pastMedicalHistory: values.pastMedicalHistory,
+        identificationType: values.identificationType,
+        identificationNumber: values.identificationNumber,
+        identificationDocument: values.identificationDocument
+          ? formData
+          : undefined,
+        privacyConsent: values.privacyConsent,
+      };
+
+      const newPatient = await registerPatient(patient);
+
+      if (newPatient) {
+        router.push(`/patients/${user.$id}/new-appointment`);
+      }
+      
     } catch (error) {
       console.log(error);
     }
@@ -274,8 +317,8 @@ const RegisterForm = ({ user }: { user: User }) => {
             name="identificationDocument"
             label="Scanned Copy of Identification Document"
             renderSkeleton={(field) => (
-              <FormControl>
-                {/* <FileUploader files={field.value} onChange={field.onChange} /> */}
+              <FormControl>                
+                <FileUploader files={field.value} onChange={field.onChange} />
               </FormControl>
             )}
           />
