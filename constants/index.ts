@@ -1,12 +1,18 @@
 export const GenderOptions = ["male", "female", "other"];
 
+enum Gender {
+  Male = "male",
+  Female = "female",
+  Other = "other"
+}
+
 export const PatientFormDefaultValues = {
   firstName: "",
   lastName: "",
   email: "",
   phone: "",
   birthDate: new Date(Date.now()),
-  gender: "male" as Gender,
+  gender: Gender.Male, 
   address: "",
   occupation: "",
   emergencyContactName: "",
