@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { cn } from "./lib/utils";
 import { ThemeProvider } from "next-themes";
+import { Analytics } from "@vercel/analytics/react"
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
           {children}
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
